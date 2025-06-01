@@ -1,0 +1,125 @@
+.assign-box {
+  background: #f8f8f8;
+  padding: 18px;
+  border-radius: 12px;
+  border: 1px solid #ccc;
+  margin-bottom: 24px;
+}
+
+.assign-header {
+  margin-bottom: 12px;
+}
+
+.assign-label {
+  font-weight: bold;
+  font-size: 1.1em;
+}
+
+.assign-options {
+  display: flex;
+  gap: 30px;
+}
+
+.assign-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.assign-option input[type="radio"] {
+  margin: 0;
+}
+
+.assign-option label {
+  font-weight: bold;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+#user-field, #department-field {
+  margin-top: 25px;
+  padding-top: 15px;
+}
+
+.transparent-empty option[value=""] {
+  color: rgba(0, 0, 0, 0.5);
+  font-style: italic;
+}
+
+.transparent-empty option:not([value=""]) {
+  color: #000;
+  font-style: normal;
+}
+
+.transparent-empty {
+  color: #333;
+  background-color: #fff;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 10px center;
+  background-size: 16px;
+  padding-right: 35px;
+  cursor: pointer;
+}
+
+.transparent-empty:focus {
+  border-color: #96e0d1;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(189, 240, 227, 0.5);
+}
+
+.transparent-empty {
+  transition: all 0.2s ease;
+}
+
+.styled-input {
+  width: 100%;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+  font-size: 16px;
+  background-color: #fff;
+  color: #333;
+  box-shadow: inset 0 1px 2px rgba(0,0,0,0.05);
+  transition: all 0.2s ease;
+}
+
+.styled-input:focus {
+  border-color: #96e0d1;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(189, 240, 227, 0.5),
+              inset 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.styled-input[type="text"] {
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3ccircle cx='11' cy='11' r='8'/%3e%3cpath d='M21 21l-4.35-4.35'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 18px;
+  padding-right: 40px;
+}
+
+select.styled-input {
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23333' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 16px;
+  padding-right: 40px;
+  appearance: none;
+  cursor: pointer;
+}
+
+select.styled-input option[value=""] {
+  color: rgba(0, 0, 0, 0.5);
+  font-style: italic;
+}
+
+select.styled-input option:not([value=""]) {
+  color: #000;
+  font-style: normal;
+}

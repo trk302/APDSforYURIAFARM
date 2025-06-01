@@ -1,0 +1,152 @@
+/* messaging.css */
+.message-search-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 16px;
+  margin-bottom: 12px;
+}
+
+.message-search-form {
+  display: flex;
+  flex-grow: 1;
+  gap: 8px;
+}
+
+.search-input {
+  padding: 8px 12px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 15px;
+  width: 100%;
+  transition: border 0.2s;
+}
+
+.search-input:focus {
+  border-color: #00b6ad;
+  outline: none;
+}
+
+.search-btn {
+  background-color: #e6f9f4;
+  color: #000;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  transition: background 0.2s;
+}
+
+.search-btn:hover {
+  background-color: #d1f0eb;
+}
+
+.filter-toggle-btn {
+  background-color: #e6f9f4;
+  color: #000;
+  font-weight: bold;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  transition: background 0.2s;
+}
+
+.filter-toggle-btn:hover {
+  background-color: #d1f0eb;
+}
+
+.filter-toggle-wrapper {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.message-filters {
+  margin-top: 10px;
+  margin-bottom: 24px;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #ddd;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  padding: 12px;
+  display: none;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 300px;
+  transition: all 0.3s ease;
+}
+
+.message-filters.open {
+  display: flex;
+}
+
+.message-filters select {
+  padding: 6px 10px;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  width: 100%;
+}
+
+.filter-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.filter-actions button {
+  background-color: #e6f9f4;
+  color: #000;
+  font-weight: bold;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+  transition: background 0.2s;
+}
+
+.filter-actions button:hover {
+  background-color: #d1f0eb;
+}
+
+.filter-actions .btn-cancel {
+  padding: 8px 12px;
+  font-weight: bold;
+  color: #d03535;
+  background: #ffeaea;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.filter-actions .btn-cancel:hover {
+  background: #f8d5d5;
+}
+
+.task-item-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.task-item-link:hover .task-item {
+  background-color: #eefefb;
+  cursor: pointer;
+}
+
+.filter-toggle-btn.active {
+  background-color: #d1f0eb;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.12);
+}

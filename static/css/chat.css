@@ -1,0 +1,224 @@
+/* chat.css */
+.chat-container {
+  padding: 40px 20px 20px 20px;
+  max-width: 900px;
+  margin: 20px auto 0 auto;
+  background-color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.chat-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #ccc;
+}
+
+.chat-title {
+  font-size: 22px;
+  font-weight: 600;
+  text-align: center;
+  margin: 0;
+}
+
+.chat-members-count {
+  font-size: 16px;
+  color: #00b6ad;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 6px;
+  user-select: none;
+  transition: color 0.2s ease;
+}
+
+.chat-members-count:hover {
+  color: #008c85;
+  text-decoration: underline;
+}
+
+.participants-wrapper {
+  overflow: hidden;
+  transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease;
+  max-height: 0;
+  opacity: 0;
+  padding: 0;
+}
+
+.participants-wrapper.show {
+  max-height: 500px;
+  opacity: 1;
+  padding: 10px 0;
+}
+
+.participants-list {
+  list-style: none;
+  padding: 10px;
+  margin-top: 10px;
+  background: #f9f9f9;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 400px; /* Збільшуємо ширину */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  text-align: center;
+}
+
+.participants-list li {
+  padding: 4px 0;
+  font-size: 14px;
+  color: #333;
+  border-bottom: 1px solid #eee;
+}
+
+.participants-list li:last-child {
+  border-bottom: none;
+}
+
+.chat-messages {
+  max-height: 400px;
+  overflow-y: auto;
+  margin-bottom: 20px;
+}
+
+.chat-message-box {
+  margin-bottom: 10px;
+  padding: 8px 10px;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  max-width: 60%;
+  display: flex;
+  flex-direction: column;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  text-indent: 10px;
+}
+
+.chat-message-header .message-sender,
+.chat-message-header .chat-email {
+  text-indent: 0;
+}
+
+.chat-message-header .chat-email {
+  font-size: 12px;
+  color: #888;
+  margin-left: 5px;
+}
+
+.chat-message-box.own {
+  background-color: #e6f9f4;
+  margin-left: 0;
+  margin-right: auto;
+  text-align: left;
+}
+
+.chat-message-box.other {
+  background-color: #fafafa;
+  margin-left: auto;
+  margin-right: 0;
+  text-align: left;
+}
+
+.chat-message-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+  font-size: 14px;
+  margin-bottom: 6px;
+}
+
+.message-sender {
+  text-align: left;
+}
+
+.chat-time {
+  font-size: 12px;
+  color: #888;
+  margin-left: 10px;
+}
+
+.chat-message-body {
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.chat-form {
+  margin-top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.chat-form textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid #00b6ad;
+  font-size: 14px;
+  font-family: Arial, sans-serif;
+  height: 44px;
+  resize: none;
+  box-sizing: border-box;
+  margin-top: 2px;
+  line-height: 23px;
+}
+
+.chat-form .btn-submit {
+  height: 44px;
+  padding: 0 20px;
+  background-color: #e6f9f4;
+  color: black;
+  border-radius: 12px;
+  font-weight: bold;
+  cursor: pointer;
+  border: none;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+  white-space: nowrap;
+  transition: background 0.3s;
+}
+
+.chat-form .btn-submit:hover {
+  background-color: #d1f0eb;
+}
+
+.btn-back {
+  font-size: 16px;
+  color: #5a0080;
+  text-decoration: none;
+  font-weight: bold;
+  display: block;
+  margin-top: 20px;
+  transition: color 0.2s ease;
+}
+
+.btn-back:hover {
+  color: #7e00aa;
+  text-decoration: underline;
+}
+
+.btn-primary {
+  display: inline-block;
+  background-color: #00b6ad;
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 12px;
+  font-size: 16px;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s ease;
+}
+
+.btn-primary:hover {
+  background-color: #008c85;
+}
+
+

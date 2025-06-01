@@ -1,0 +1,246 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Задачі{% endblock %}
+
+{% block content %}
+<div class="tasks-container">
+  <h2 class="tasks-title">Мої задачі</h2>
+
+  <div class="tasks-controls">
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js"></script>
+
+<style>
+  .fc .fc-event,
+  .fc .fc-event-title,
+  .fc .fc-event-time,
+  .fc .fc-event-main {
+    color: #000 !important;
+  }
+  .fc-event-main-frame {
+    color: #000 !important;
+  }
+</style>
+
+    <div class="create-wrapper">
+      {% if user.role == 'admin' or user.role == 'manager' %}
+        <a href="{% url 'create_task' %}" class="create-btn">Створити задачу</a>
+      {% endif %}
+    </div>
+
+    <div class="view-switch">
+      <button class="switch-btn active" data-tab="inbox">Вхідні</button>
+      {% if user.role == 'admin' or user.role == 'manager' %}
+        <button class="switch-btn" data-tab="sent">Відправлені</button>
+      {% endif %}
+      <button class="switch-btn" data-tab="calendar">Календар</button>
+    </div>
+  </div>
+
+  <!-- Вхідні -->
+  <div id="inbox" class="task-list-tab active">
+    {% if inbox_tasks %}
+      <ul class="task-list">
+        {% for task in inbox_tasks %}
+          <li class="task-item task-{{ task.status }}" data-task-id="{{ task.id }}">
+            <div class="task-header">
+              <strong>{{ task.title }}</strong>
+              <span class="task-dates">{{ task.start_date }} – {{ task.end_date }}</span>
+            </div>
+            <div class="task-body">
+              <p>{{ task.description }}</p>
+              <small>
+                <strong>Автор:</strong> {{ task.creator.full_name }} |
+                <strong>Email:</strong> {{ task.creator.email }}<br>
+                <strong>Відділ автора:</strong> {{ task.creator.department.name }} |
+                <strong>Посада автора:</strong> {{ task.creator.position }}<br>
+                <strong>Кому призначено:</strong>
+                {% if task.assigned_user %}
+                  {{ task.assigned_user.full_name }} ({{ task.assigned_user.email }})
+                {% elif task.assigned_department %}
+                  Відділ «{{ task.assigned_department.name }}»
+                {% endif %}<br>
+                <strong>Статус:</strong>
+                {% if task.status == 'new' %}
+                  <span style="color:#3399ff;">Не прийнято</span>
+                {% elif task.status == 'in_progress' %}
+                  <span style="color:#cc9900;">У роботі</span>
+                {% elif task.status == 'overdue' %}
+                  <span style="color:#cc0000;">Прострочено</span>
+                {% elif task.status == 'completed' %}
+                  <span style="color:#228B22;">Виконано</span>
+                {% endif %}
+              </small>
+            </div>
+
+            {% if task.assigned_user == user %}
+              <div class="task-actions">
+                {% if task.status == 'new' %}
+                  <form method="post" action="{% url 'take_task' task.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="icon-btn" style="outline: none; border: none; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);">✅ Взяти в роботу</button>
+                  </form>
+                {% elif task.status == 'in_progress' %}
+                  <form method="post" action="{% url 'complete_task' task.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="icon-btn" style="outline: none; border: none; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);">🏁 Завершити</button>
+                  </form>
+                {% endif %}
+              </div>
+            {% elif task.assigned_department == user.department and user.role == 'manager' %}
+              <div class="task-actions">
+                {% if task.status == 'new' %}
+                  <form method="post" action="{% url 'take_task' task.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="icon-btn" style="outline: none; border: none; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);">✅ Взяти в роботу</button>
+                  </form>
+                {% elif task.status == 'in_progress' %}
+                  <form method="post" action="{% url 'complete_task' task.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="icon-btn" style="outline: none; border: none; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);">🏁 Завершити</button>
+                  </form>
+                {% endif %}
+              </div>
+            {% endif %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="no-tasks">Немає вхідних задач.</p>
+    {% endif %}
+  </div>
+
+  <div id="sent" class="task-list-tab">
+    {% if sent_tasks %}
+      <ul class="task-list">
+        {% for task in sent_tasks %}
+          <li class="task-item task-{{ task.status }}">
+            <div class="task-header">
+              <strong>{{ task.title }}</strong>
+              <span class="task-dates">{{ task.start_date }} – {{ task.end_date }}</span>
+            </div>
+            <div class="task-body">
+              <p>{{ task.description }}</p>
+              <small>
+                <strong>Дата:</strong> {{ task.start_date }} |
+                <strong>Статус:</strong>
+                {% if task.status == 'new' %}
+                  <span style="color:#3399ff;">Не прийнято</span>
+                {% elif task.status == 'in_progress' %}
+                  <span style="color:#cc9900;">У роботі</span>
+                {% elif task.status == 'overdue' %}
+                  <span style="color:#cc0000;">Прострочено</span>
+                {% elif task.status == 'completed' %}
+                  <span style="color:#228B22;">Виконано</span>
+                {% endif %}
+
+                {% if task.assigned_user %}
+                  | <strong>Користувач:</strong> {{ task.assigned_user.full_name }} ({{ task.assigned_user.email }})
+                {% elif task.assigned_department %}
+                  | <strong>Відділ:</strong> {{ task.assigned_department.name }}
+                {% endif %}
+              </small>
+            </div>
+            <div class="task-actions">
+              <a href="{% url 'update_task' task.id %}" class="icon-btn">✏️ Редагувати</a>
+              <a href="{% url 'delete_task' task.id %}" class="icon-btn">🗑️ Видалити</a>
+            </div>
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="no-tasks">Немає відправлених задач.</p>
+    {% endif %}
+  </div>
+
+<div id="calendar" class="task-list-tab">
+  {% if user.role == 'admin' or user.role == 'manager' %}
+    <div class="calendar-toggle" style="margin-bottom: 10px;">
+      <label style="font-weight: bold;">
+        <input type="checkbox" id="sent-tasks-toggle" style="margin-right: 6px;">
+        Показати відправлені задачі
+      </label>
+    </div>
+  {% endif %}
+  <div id="calendar-widget"></div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const buttons = document.querySelectorAll('.switch-btn');
+    const tabs = document.querySelectorAll('.task-list-tab');
+    const showSentCheckbox = document.getElementById('sent-tasks-toggle');
+    let calendar;
+
+    function showTab(name) {
+      tabs.forEach(tab => tab.classList.toggle('active', tab.id === name));
+      buttons.forEach(btn => btn.classList.toggle('active', btn.dataset.tab === name));
+
+      if (name === 'calendar') {
+        if (!window.calendarInitialized) {
+          const calendarEl = document.getElementById('calendar-widget');
+          calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            locale: 'uk',
+            firstDay: 1,
+            headerToolbar: {
+              left: 'prev,next today',
+              center: 'title',
+              right: 'dayGridMonth,timeGridWeek,listWeek'
+            },
+            eventDisplay: 'block',
+            events: getCalendarUrl(),
+            eventClick: function(info) {
+              alert(info.event.title + "\n\n" + info.event.extendedProps.description);
+            },
+            eventDidMount: function(info) {
+              info.el.style.color = '#000';
+              info.el.style.whiteSpace = 'normal';
+            },
+            dayCellDidMount: function(info) {
+              const today = new Date();
+              if (
+                info.date.getFullYear() === today.getFullYear() &&
+                info.date.getMonth() === today.getMonth() &&
+                info.date.getDate() === today.getDate()
+              ) {
+                info.el.style.backgroundColor = "#f0f0f0";
+              }
+            }
+          });
+          calendar.render();
+          window.calendarInitialized = true;
+        } else {
+          calendar.removeAllEvents();
+          calendar.setOption('events', getCalendarUrl());
+          calendar.refetchEvents();
+        }
+      }
+    }
+
+    function getCalendarUrl() {
+      return showSentCheckbox && showSentCheckbox.checked
+        ? "{% url 'task_sent_events' %}"
+        : "{% url 'task_events' %}";
+    }
+
+    if (showSentCheckbox) {
+      showSentCheckbox.addEventListener('change', () => {
+        if (window.calendarInitialized && calendar) {
+          calendar.removeAllEvents();
+          calendar.setOption('events', getCalendarUrl());
+          calendar.refetchEvents();
+        }
+      });
+    }
+
+    buttons.forEach(btn =>
+      btn.addEventListener('click', () => showTab(btn.dataset.tab))
+    );
+
+    showTab('inbox');
+  });
+</script>
+</div>
+{% endblock %}

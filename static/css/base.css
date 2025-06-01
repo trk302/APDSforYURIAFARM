@@ -1,0 +1,138 @@
+:root {
+    --photo-width: 70px;
+    --gap: 10px;
+    --info-width: 360px;
+    --block-width: calc(var(--photo-width) + var(--gap) + var(--info-width));
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    background-color: #e6fff5;
+    padding: 10px 30px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.logo img {
+    height: 100px;
+}
+
+.logo {
+    align-self: center;
+}
+
+.user-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--gap);
+    width: var(--block-width);
+}
+
+.profile-link {
+    width: var(--block-width);
+    padding: 8px 16px;
+    text-align: center;
+    background-color: #bdf0e3;
+    color: #000 !important;
+    text-decoration: none !important;
+    font-weight: bold;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.profile-link:hover {
+    background-color: #96e0d1;
+    transition: background-color 0.3s ease;
+}
+
+.user-top {
+    display: flex;
+    align-items: center;
+    gap: var(--gap);
+}
+.user-photo,
+.default-photo {
+    margin-top: calc(var(--gap) / 2);
+}
+
+.user-photo img,
+.default-photo {
+    width: var(--photo-width);
+    height: var(--photo-width);
+    border-radius: 10px;
+    object-fit: cover;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.default-photo {
+    background: #ccc;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+}
+
+.user-details {
+    width: var(--info-width);
+    background-color: #bdf0e3;
+    padding: 10px;
+    border-radius: 12px;
+    font-size: 14px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.nav-buttons.horizontal {
+    display: flex;
+    width: var(--block-width);
+    gap: var(--gap);
+}
+
+.nav-buttons.horizontal a {
+    flex: 1;
+    padding: 8px 16px;
+    text-align: center;
+    background-color: #bdf0e3;
+    color: #000 !important;
+    text-decoration: none !important;
+    font-weight: bold;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.nav-buttons.horizontal a:hover {
+    background-color: #96e0d1;
+}
+
+.nav-buttons {
+    display: flex;
+    gap: var(--gap);
+}
+
+.nav-buttons a {
+    display: inline-block;
+    padding: 8px 16px;
+    text-align: center;
+    background-color: #bdf0e3;
+    color: #000 !important;
+    text-decoration: none !important;
+    font-weight: bold;
+    border-radius: 12px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.nav-buttons a:hover {
+    background-color: #96e0d1;
+}

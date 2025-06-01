@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Редагувати чат{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/chat_list.css' %}">
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+{% endblock %}
+
+{% block content %}
+<div class="chat-container">
+  <h2 class="formchat-title">Редагувати чат</h2>
+
+<form method="post" class="create-chat-form">
+  {% csrf_token %}
+
+  <div class="form-group">
+    <label for="chat_name">Назва чату:</label>
+    <input type="text" id="chat_name" name="chat_name" class="chat-name-input"
+           placeholder="Введіть назву чату" value="{{ chat.name }}" required>
+  </div>
+
+  <div class="form-group">
+    <label for="participants_email">Додати нових користувачів за email:</label>
+    <div class="form-group-user">
+      <input type="text" id="id_receiver" name="participant_email_input" class="user-input"
+             placeholder="Email користувача" autocomplete="off">
+      <button type="button" id="add-user-btn" class="btn-add-user">➕</button>
+    </div>
+    <span class="error-message" style="display:none;">Користувача з таким email не знайдено.</span>
+  </div>
+
+  <input type="hidden" id="hidden_participants" name="receiver_email" value="">
+
+  <div class="participants-container">
+    <label>Поточні учасники чату:</label>
+    <ul id="current-participants-list">
+      {% for participant in chat.participants.all %}
+        <li data-email="{{ participant.email }}" class="participant-item current-participant">
+          <span class="participant-email">{{ participant.email }}</span>
+          {% if participant != chat.creator %}
+            <button type="button" class="remove-participant remove-current">
+              <span class="remove-icon">✖</span>
+            </button>
+          {% else %}
+            <span style="font-size: 12px; color: #666; margin-left: 10px;">(Автор)</span>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+
+  <div class="participants-container" id="new-participants-container" style="display: none;">
+    <label>Нові учасники для додавання:</label>
+    <ul id="participants-list">
+    </ul>
+  </div>
+
+  <input type="hidden" id="removed_participants" name="removed_participants" value="">
+
+  <div>
+    <button type="submit" class="btn-primary" style="outline: none; border: none; box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);">Зберегти зміни</button>
+  </div>
+</form>
+
+<a href="{% url 'chat_detail' chat.id %}" class="btn-back">← Назад до чату</a>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
+<script>
+$(function() {
+  let addedParticipants = [];
+  let removedParticipants = [];
+
+  $("#id_receiver").autocomplete({
+    source: "{% url 'email_autocomplete' %}",
+    minLength: 2,
+    select: function(event, ui) {
+      $('#id_receiver').val(ui.item.value);
+      return false;
+    }
+  });
+
+  $('#add-user-btn').click(function() {
+    var email = $('#id_receiver').val().trim();
+    var errorMessage = $(".error-message");
+    var newParticipantsContainer = $("#new-participants-container");
+
+    errorMessage.hide();
+
+    if (email) {
+      if (addedParticipants.includes(email)) {
+        errorMessage.text('Цей користувач вже доданий до списку нових учасників.').show();
+        return;
+      }
+
+      var isCurrentParticipant = false;
+      $('#current-participants-list li').each(function() {
+        if ($(this).data('email') === email) {
+          isCurrentParticipant = true;
+          return false;
+        }
+      });
+
+      if (isCurrentParticipant) {
+        errorMessage.text('Цей користувач вже є учасником чату.').show();
+        return;
+      }
+
+      $.ajax({
+        url: '{% url "check_user_email" %}',
+        method: 'POST',
+        data: {
+          email: email,
+          csrfmiddlewaretoken: '{{ csrf_token }}'
+        },
+        success: function(response) {
+          if (response.exists) {
+            var current_user_email = '{{ request.user.email }}';
+            if (email !== current_user_email) {
+              addedParticipants.push(email);
+
+              var participantItem = $('<li>').attr('data-email', email).addClass('participant-item');
+              participantItem.html(`
+                <span class="participant-email">${email}</span>
+                <button type="button" class="remove-participant remove-new">
+                  <span class="remove-icon">✖</span>
+                </button>
+              `);
+
+              $('#participants-list').append(participantItem);
+              $('#id_receiver').val('');
+
+              newParticipantsContainer.show();
+
+              updateHiddenFields();
+
+            } else {
+              errorMessage.text('Ви не можете додати себе до чату.').show();
+            }
+          } else {
+            errorMessage.text('Користувача з таким email не знайдено.').show();
+          }
+        },
+        error: function() {
+          errorMessage.text('Сталася помилка при перевірці користувача.').show();
+        }
+      });
+    } else {
+      errorMessage.text('Будь ласка, введіть email користувача.').show();
+    }
+  });
+
+
+  $(document).on('click', '.remove-new', function() {
+    var email = $(this).parent().attr('data-email');
+
+    addedParticipants = addedParticipants.filter(function(item) {
+      return item !== email;
+    });
+
+    $(this).parent().remove();
+
+    if (addedParticipants.length === 0) {
+      $('#new-participants-container').hide();
+    }
+
+    updateHiddenFields();
+  });
+
+  $(document).on('click', '.remove-current', function() {
+    var email = $(this).parent().attr('data-email');
+
+    if (confirm('Ви впевнені, що хочете видалити цього учасника з чату?')) {
+      if (!removedParticipants.includes(email)) {
+        removedParticipants.push(email);
+      }
+
+      $(this).parent().fadeOut(300, function() {
+        $(this).remove();
+        updateHiddenFields();
+      });
+    }
+  });
+
+  function updateHiddenFields() {
+    $('#hidden_participants').val(addedParticipants.join(','));
+    $('#removed_participants').val(removedParticipants.join(','));
+  }
+
+  $('#id_receiver').keypress(function(e) {
+    if (e.which == 13) {
+      e.preventDefault();
+      $('#add-user-btn').click();
+    }
+  });
+});
+</script>
+
+{% endblock %}

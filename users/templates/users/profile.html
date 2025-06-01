@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Профіль працівника{% endblock %}
+
+{% block extra_css %}
+<style>
+  .profile-container {
+    max-width: 700px;
+    margin: 40px auto;
+    background: #fff;
+    padding: 30px 40px;
+    border-radius: 16px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    font-family: Arial, sans-serif;
+  }
+
+  .profile-container h2 {
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .profile-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 30px;
+    flex-wrap: wrap;
+    margin-bottom: 30px;
+  }
+
+  .profile-photo img,
+  .default-photo {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid #ccc;
+  }
+
+  .default-photo {
+    background: #eee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #777;
+    font-weight: bold;
+  }
+
+  .profile-details > div {
+    margin-bottom: 12px;
+    font-size: 16px;
+  }
+
+  .profile-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 20px;
+  }
+
+  .btn-action {
+    width: 100%;
+    padding: 14px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 17px;
+    text-align: center;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+  }
+
+  .btn-action.edit {
+    background-color: #bdf0e3;
+    color: #000;
+  }
+
+  .btn-action.edit:hover {
+    background-color: #96e0d1;
+  }
+
+  .btn-action.logout {
+    background-color: #e76161;
+    color: #fff;
+  }
+
+  .btn-action.logout:hover {
+    background-color: #c94b4b;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="profile-container">
+  <h2>Профіль працівника</h2>
+
+  <div class="profile-content">
+    <div class="profile-photo">
+      {% if user.photo %}
+        <img src="{{ user.photo.url }}" alt="Фото профілю">
+      {% else %}
+        <div class="default-photo">Н/Д</div>
+      {% endif %}
+    </div>
+
+    <div class="profile-details">
+      <div><strong>ПІБ:</strong> {{ user.full_name }}</div>
+      <div><strong>Електронна пошта:</strong> {{ user.email }}</div>
+      <div><strong>Телефон:</strong> {{ user.phone_number }}</div>
+      <div><strong>Відділ:</strong> {{ user.department.name|default:'Невизначено' }}</div>
+      <div><strong>Посада:</strong>
+        {% if user.position %}
+          {{ user.position }}
+        {% else %}
+          Почекайте, поки адміністратор змінить
+        {% endif %}
+      </div>
+    </div>
+  </div>
+
+  <div class="profile-actions">
+    <a href="{% url 'edit_profile' %}" class="btn-action edit">Редагувати профіль</a>
+    <a href="{% url 'logout' %}" class="btn-action logout">Вийти</a>
+  </div>
+</div>
+{% endblock %}

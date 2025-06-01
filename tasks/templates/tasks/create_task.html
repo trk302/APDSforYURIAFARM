@@ -1,0 +1,127 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/forms.css' %}">
+<link rel="stylesheet" href="{% static 'css/assign.css' %}">
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+{% endblock %}
+
+{% block title %}Нова задача{% endblock %}
+
+{% block content %}
+<div class="form-container">
+  <h2>Створити нову задачу</h2>
+  <form method="post" class="form-wrapper">
+    {% csrf_token %}
+
+    <div class="form-group">
+      {{ form.title.label_tag }}
+      {{ form.title }}
+      {{ form.title.errors }}
+    </div>
+
+    <div class="form-group">
+      {{ form.description.label_tag }}
+      {{ form.description }}
+      {{ form.description.errors }}
+    </div>
+
+    <div class="form-group">
+      {{ form.start_date.label_tag }}
+      {{ form.start_date }}
+      {{ form.start_date.errors }}
+    </div>
+
+    <div class="form-group">
+      {{ form.end_date.label_tag }}
+      {{ form.end_date }}
+      {{ form.end_date.errors }}
+    </div>
+
+    <div class="assign-box">
+      <div class="assign-header">
+        <span class="assign-label">Призначити:</span>
+      </div>
+
+      <div class="assign-options">
+        <div class="assign-option">
+          <input type="radio" name="assign_type" value="user" id="assign-user">
+          <label for="assign-user">Працівнику</label>
+        </div>
+
+        <div class="assign-option">
+          <input type="radio" name="assign_type" value="department" id="assign-department">
+          <label for="assign-department">Відділу</label>
+        </div>
+      </div>
+
+      <div class="form-group" id="user-field" style="display: none;">
+        {{ form.assigned_user.label_tag }}
+        {{ form.assigned_user }}
+        {{ form.assigned_user.errors }}
+      </div>
+
+      <div class="form-group" id="department-field" style="display: none;">
+        {{ form.assigned_department.label_tag }}
+        {{ form.assigned_department }}
+        {{ form.assigned_department.errors }}
+      </div>
+    </div>
+
+    <button type="submit" class="btn-submit">Створити</button>
+  </form>
+
+  <div class="back-link">
+    <a href="{% url 'task_dashboard' %}">← Назад до списку задач</a>
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+
+<script>
+  $(function() {
+    $("#user-autocomplete").autocomplete({
+      source: "{% url 'email_autocomplete' %}",
+      minLength: 2,
+      select: function(event, ui) {
+        $('#user-autocomplete').val(ui.item.value);
+      }
+    });
+
+    $("#title-autocomplete").autocomplete({
+      source: "{% url 'analysis_autocomplete' %}",
+      minLength: 2,
+      select: function(event, ui) {
+        $('#title-autocomplete').val(ui.item.label);
+        $('#id_description').val(ui.item.description);
+        return false;
+      }
+    });
+
+    function updateAssignFields() {
+      const isUser = document.getElementById("assign-user").checked;
+      const isDep = document.getElementById("assign-department").checked;
+      document.getElementById("user-field").style.display = isUser ? "block" : "none";
+      document.getElementById("department-field").style.display = isDep ? "block" : "none";
+    }
+
+    document.getElementById("assign-user").addEventListener("change", updateAssignFields);
+    document.getElementById("assign-department").addEventListener("change", updateAssignFields);
+    updateAssignFields();
+  });
+</script>
+
+{% if messages %}
+<script>
+  {% for message in messages %}
+    {% if 'Задачу створено' in message %}
+      setTimeout(function() {
+        window.location.href = "{% url 'task_dashboard' %}";
+      }, 300);
+    {% endif %}
+  {% endfor %}
+</script>
+{% endif %}
+{% endblock %}

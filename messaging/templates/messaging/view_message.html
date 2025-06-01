@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}Перегляд повідомлення{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/forms.css' %}">
+<style>
+  .form-container p {
+    font-size: 16px;
+    margin-bottom: 14px;
+  }
+
+  .attachment-link {
+    font-weight: bold;
+    color: #0077cc;
+    text-decoration: none;
+  }
+
+  .attachment-link:hover {
+    text-decoration: underline;
+  }
+
+  .back-link {
+    text-align: left;
+    padding-left: 20px;
+    margin-top: 30px;
+  }
+
+  .back-link a {
+    font-size: 16px;
+    font-weight: bold;
+    color: #5a0080;
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+
+  .back-link a:hover {
+    color: #7e00aa;
+    text-decoration: underline;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+  <h2 style="text-align: center; margin-bottom: 25px;">{{ message.subject }}</h2>
+
+  <p><strong>Від:</strong> {{ message.sender.email }}</p>
+  <p><strong>Дата:</strong> {{ message.timestamp|date:"d.m.Y H:i" }}</p>
+  <p>{{ message.body|linebreaksbr }}</p>
+
+  {% if message.attachment %}
+    <p><strong>Вкладення:</strong> <a href="{{ message.attachment.url }}" target="_blank" class="attachment-link">Завантажити</a></p>
+  {% endif %}
+
+  <div class="back-link">
+    <a href="{% url 'inbox' %}">← Назад до вхідних</a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,64 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}Юрія-Фарм{% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+    <link rel="stylesheet" href="{% static 'css/tasks.css' %}">
+    <link rel="stylesheet" href="{% static 'css/forms.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+<body>
+
+<header class="header">
+    <div class="logo">
+        <a href="{% url 'task_dashboard' %}">
+            <img src="{% static 'img/logo.png' %}" alt="Логотип">
+        </a>
+    </div>
+
+    {% if user.is_authenticated %}
+    <div class="user-info">
+        <a class="profile-link" href="{% url 'profile' %}">Мій профіль</a>
+
+        <div class="user-top">
+            <div class="user-photo">
+                {% if user.photo %}
+                    <img src="{{ user.photo.url }}" alt="Фото">
+                {% else %}
+                    <div class="default-photo">Н/Д</div>
+                {% endif %}
+            </div>
+            <div class="user-details">
+                <div><strong>ПІБ:</strong> {{ user.full_name }}</div>
+                <div><strong>Відділ:</strong> {{ user.department.name|default:'Невизначено' }}</div>
+                <div><strong>Посада:</strong>
+                    {% if user.position %}
+                        {{ user.position }}
+                    {% else %}
+                        Почекайте, поки адміністратор змінить
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-buttons horizontal">
+            <a href="{% url 'task_dashboard' %}">Мої задачі</a>
+            <a href="{% url 'inbox' %}">Повідомлення</a>
+        </div>
+    </div>
+    {% elif request.path != '/users/login/' and request.path != '/users/register/' %}
+    <div class="nav-buttons">
+        <a href="{% url 'login' %}">Увійти</a>
+        <a href="{% url 'register' %}">Реєстрація</a>
+    </div>
+    {% endif %}
+</header>
+
+<main>
+    {% block content %}{% endblock %}
+</main>
+
+</body>
+</html>

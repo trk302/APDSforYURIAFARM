@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<h2>Список досліджень / задач</h2>
+
+{% if tasks %}
+    <ul>
+        {% for task in tasks %}
+        <li>
+            <strong>{{ task.title }}</strong><br>
+            Відділ: {% if task.department %}{{ task.department.name }}{% else %}Немає відділу{% endif %}<br>
+            Посада: {{ task.position }}<br>
+            Виконавці:
+            {% if task.assigned_users %}
+                {% for user in task.assigned_users.all %}
+                    {{ user.full_name }} ({{ user.email }})<br>
+                {% endfor %}
+            {% else %}
+                Немає виконавців
+            {% endif %}<br>
+            Дати: {{ task.start_date }} — {{ task.end_date }}<br>
+            Статус:
+            {% if task.status == 'new' %}
+                <span style="color:#3399ff;">Не прийнято</span>
+            {% elif task.status == 'in_progress' %}
+                <span style="color:#cc9900;">У роботі</span>
+            {% elif task.status == 'overdue' %}
+                <span style="color:#cc0000;">Прострочено</span>
+            {% elif task.status == 'completed' %}
+                <span style="color:#228B22;">Виконано</span>
+            {% endif %}
+        </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>Немає задач для відображення.</p>
+{% endif %}
+
+{% if user.role == 'admin' or user.role == 'manager' %}
+    <a href="{% url 'create_task' %}">+ Створити нову задачу</a>
+{% endif %}
+{% endblock %}

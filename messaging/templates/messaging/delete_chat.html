@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/forms.css' %}">
+<style>
+  .form-container p {
+    text-align: center;
+    font-size: 16px;
+    margin-bottom: 30px;
+  }
+
+  .form-container small {
+    display: block;
+    margin-top: 8px;
+    font-size: 14px;
+    opacity: 0.6;
+  }
+
+  .btn-confirm-delete {
+    background-color: #e76161;
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    transition: background 0.3s ease;
+    display: block;
+    margin: 0 auto 25px auto;
+  }
+
+  .btn-confirm-delete:hover {
+    background-color: #c94b4b;
+  }
+
+  .btn-cancel {
+    display: inline-block;
+    font-size: 16px;
+    font-weight: bold;
+    color: #5a0080;
+    text-decoration: none;
+    transition: color 0.2s ease;
+    margin-left: 0;
+    margin-top: 5px;
+  }
+
+  .btn-cancel:hover {
+    color: #7e00aa;
+    text-decoration: underline;
+  }
+
+  .cancel-align-left {
+    text-align: left;
+    padding-left: 20px;
+  }
+</style>
+{% endblock %}
+
+{% block title %}Видалити чат: {{ chat.name }}?{% endblock %}
+
+{% block content %}
+<div class="form-container">
+  <h2>Видалити чат: {{ chat.name }}?</h2>
+  <p>
+    Ви дійсно бажаєте <strong>видалити цей чат</strong>?
+    <small>Після видалення його не можна буде відновити.</small>
+  </p>
+  <form method="post">
+    {% csrf_token %}
+    <button type="submit" class="btn-confirm-delete">Видалити</button>
+  </form>
+
+  <div class="cancel-align-left">
+    <a href="{% url 'chat_list' %}" class="btn-cancel">← Скасувати</a>
+  </div>
+</div>
+{% endblock %}

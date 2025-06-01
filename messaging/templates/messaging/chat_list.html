@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Мої чати{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/chat_list.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="chat-container">
+  <h2 class="formchat-title">Мої чати</h2>
+
+  <a href="{% url 'create_chat' %}" class="btn-primary2">Створити чат</a>
+
+  {% if chats %}
+    <ul class="chat-list">
+      {% for chat in chats %}
+        {% if chat.is_group %}
+        <li class="chat-item {% if chat.last_message_time > user.last_login %}has-new-message{% endif %}"
+            onclick="window.location.href='{% url 'chat_detail' chat.id %}'">
+          <div class="chat-info">
+            <div class="chat-item-header">
+              <div class="chat-title-section">
+                <strong>{{ chat.name|default:"Без назви" }}</strong>
+              </div>
+              <div class="chat-meta">
+                <small>Учасники: {{ chat.participants.count }}</small>
+              </div>
+            </div>
+
+            {% if chat.last_message %}
+            <div class="last-message-container">
+              <p class="last-message-sender">
+                <strong class="sender-name">{{ chat.last_message_sender.full_name }}</strong>
+                <span class="sender-email">{{ chat.last_message_sender.email }}</span>
+              </p>
+              <p class="message-date">{{ chat.last_message_time|date:"d.m.Y H:i" }}</p>
+              <p class="message-content">{{ chat.last_message.content|default:"Немає повідомлень"|linebreaksbr }}</p>
+            </div>
+            {% else %}
+              <p class="last-message">Немає повідомлень</p>
+            {% endif %}
+          </div>
+
+          <div class="chat-actions">
+            {% if chat.creator == request.user %}
+              <a href="{% url 'edit_chat' chat.id %}" class="icon-btn" onclick="event.stopPropagation();">✏️ Редагувати</a>
+              <a href="{% url 'delete_chat' chat.id %}" class="icon-btn" onclick="event.stopPropagation();">🗑️ Видалити</a>
+            {% elif request.user in chat.participants.all %}
+              <form method="post" action="{% url 'leave_chat' chat.id %}" class="leave-chat-form" onclick="event.stopPropagation();">
+                {% csrf_token %}
+                <button type="submit" class="icon-btn">➖ Покинути чат</button>
+              </form>
+            {% endif %}
+          </div>
+        </li>
+        {% endif %}
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="no-chats-message">У вас ще немає чатів.</p>
+  {% endif %}
+</div>
+{% endblock %}

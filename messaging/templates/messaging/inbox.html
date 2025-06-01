@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Повідомлення{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/tasks.css' %}">
+<link rel="stylesheet" href="{% static 'css/messaging.css' %}">
+<link rel="stylesheet" href="https://code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+{% endblock %}
+
+{% block content %}
+<div class="tasks-container">
+  <h2 class="tasks-title">Мої повідомлення</h2>
+
+  <div class="tasks-controls">
+    <div class="create-wrapper">
+      <a href="{% url 'send_message' %}" class="create-btn">Створити повідомлення</a>
+    </div>
+    <div class="view-switch">
+      <button class="switch-btn" onclick="window.location.href='{% url 'chat_list' %}'">Групові чати</button>
+      <button class="switch-btn {% if active_tab == 'inbox' %}active{% endif %}" data-tab="inbox">Вхідні</button>
+      <button class="switch-btn {% if active_tab == 'sent' %}active{% endif %}" data-tab="sent">Відправлені</button>
+    </div>
+  </div>
+
+  <div class="message-search-row">
+    <form method="get" class="message-search-form">
+      <input type="hidden" name="tab" id="active-tab-input" value="{{ active_tab|default:'inbox' }}">
+      <input type="text" name="search" id="message-search" placeholder="Пошук за темою..."
+             value="{{ search_query }}" class="search-input">
+      <button type="submit" class="search-btn">🔍︎</button>
+    </form>
+
+    <button type="button" class="filter-toggle-btn" onclick="toggleFilters()">☰</button>
+  </div>
+
+  <div class="filter-toggle-wrapper">
+    <form method="get" id="message-filters" class="message-filters">
+      <input type="hidden" name="tab" id="active-tab-filter" value="{{ active_tab|default:'inbox' }}">
+
+      <select name="date_sort">
+        <option value="">Сортування</option>
+        <option value="newest" {% if request.GET.date_sort == 'newest' %}selected{% endif %}>Самі нові</option>
+        <option value="oldest" {% if request.GET.date_sort == 'oldest' %}selected{% endif %}>Самі давні</option>
+      </select>
+
+      <select name="message_type">
+        <option value="">Усі типи</option>
+        <option value="normal" {% if request.GET.message_type == 'normal' %}selected{% endif %}>Звичайні</option>
+        <option value="reply" {% if request.GET.message_type == 'reply' %}selected{% endif %}>Відповіді</option>
+      </select>
+
+      <div class="filter-actions">
+        <button type="submit">🔍︎ Застосувати</button>
+        <a href="{% url 'inbox' %}?tab={{ active_tab }}" class="btn-cancel">⤵︎</a>
+      </div>
+    </form>
+  </div>
+
+  <div id="inbox" class="task-list-tab {% if active_tab == 'inbox' %}active{% else %}hidden{% endif %}">
+    {% if inbox_messages %}
+      <ul class="task-list">
+        {% for msg in inbox_messages %}
+          <a href="{% url 'view_message' msg.id %}" class="task-item-link">
+            <li class="task-item">
+              <div class="task-header">
+                <strong>{{ msg.subject }}</strong>
+                <span class="task-dates">{{ msg.timestamp|date:"d.m.Y H:i" }}</span>
+              </div>
+              <div class="task-body">
+                <p>{{ msg.body|truncatewords:25 }}</p>
+                <small>
+                  <strong>Відправник:</strong> {{ msg.sender.full_name }} |
+                  <strong>Email:</strong> {{ msg.sender.email }}
+                </small>
+              </div>
+              <div class="task-actions">
+                <a href="{% url 'reply_message' msg.id %}" class="icon-btn" onclick="event.stopPropagation()">✉️ Відповісти</a>
+              </div>
+            </li>
+          </a>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="no-tasks">Немає вхідних повідомлень.</p>
+    {% endif %}
+  </div>
+
+  <div id="sent" class="task-list-tab {% if active_tab == 'sent' %}active{% else %}hidden{% endif %}">
+    {% if sent_messages %}
+      <ul class="task-list">
+        {% for msg in sent_messages %}
+          <a href="{% url 'view_message' msg.id %}" class="task-item-link">
+            <li class="task-item">
+              <div class="task-header">
+                <strong>{{ msg.subject }}</strong>
+                <span class="task-dates">{{ msg.timestamp|date:"d.m.Y H:i" }}</span>
+              </div>
+              <div class="task-body">
+                <p>{{ msg.body|truncatewords:25 }}</p>
+                <small>
+                  <strong>Отримувач:</strong> {{ msg.receiver.full_name }} |
+                  <strong>Email:</strong> {{ msg.receiver.email }}
+                </small>
+              </div>
+              <div class="task-actions">
+                <a href="{% url 'edit_message' msg.id %}" class="icon-btn" onclick="event.stopPropagation()">✏️ Редагувати</a>
+                <a href="{% url 'delete_message' msg.id %}" class="icon-btn" onclick="event.stopPropagation()">🗑️ Видалити</a>
+              </div>
+            </li>
+          </a>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="no-tasks">Немає відправлених повідомлень.</p>
+    {% endif %}
+  </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
+<script>
+  function toggleFilters() {
+    const filterBox = document.getElementById("message-filters");
+    const toggleBtn = document.querySelector(".filter-toggle-btn");
+
+    const isOpen = filterBox.classList.toggle("open");
+    toggleBtn.classList.toggle("active", isOpen);
+  }
+
+  $(function () {
+    const tabInput = document.getElementById("active-tab-input");
+    const tabFilterInput = document.getElementById("active-tab-filter");
+
+    document.querySelectorAll('.switch-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const tab = btn.dataset.tab;
+        tabInput.value = tab;
+        tabFilterInput.value = tab;
+
+        document.querySelectorAll('.task-list-tab').forEach(t => t.classList.remove('active', 'hidden'));
+        document.getElementById(tab).classList.add('active');
+        document.querySelectorAll('.switch-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      });
+    });
+
+    $("#message-search").autocomplete({
+      source: function (request, response) {
+        let tab = document.getElementById("active-tab-input").value;
+        let url = tab === "sent" ? "{% url 'subject_autocomplete_sent' %}" : "{% url 'subject_autocomplete' %}";
+        $.getJSON(url, { term: request.term }, response);
+      },
+      minLength: 2
+    });
+  });
+</script>
+
+{% endblock %}

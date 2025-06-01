@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Чат{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/chat.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="chat-container">
+  <div class="chat-header">
+    <h2 class="chat-title">{{ chat.name|default:"Без назви" }}</h2>
+    <span class="chat-members-count" onclick="toggleParticipants()">Учасників: {{ chat.participants.count }}</span>
+
+    <div id="participants-wrapper" class="participants-wrapper">
+      <ul id="participants-list" class="participants-list">
+        {% for user in chat.participants.all %}
+          <li>{{ user.full_name }} ({{ user.email }})</li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+
+  <div class="chat-messages">
+    {% for message in messages %}
+      <div class="chat-message-row {% if message.sender == request.user %}own{% else %}other{% endif %}">
+        <div class="chat-message-box {% if message.sender == request.user %}own{% else %}other{% endif %}">
+          <div class="chat-message-header">
+            <div class="message-sender">
+              <strong>{{ message.sender.full_name }}</strong>
+              <span class="chat-email">({{ message.sender.email }})</span>
+            </div>
+            <span class="chat-time">{{ message.timestamp|date:"d.m.Y H:i" }}</span>
+          </div>
+          <div class="chat-message-body">
+            {{ message.content|linebreaksbr }}
+          </div>
+        </div>
+      </div>
+    {% empty %}
+      <p class="no-messages">Немає повідомлень у цьому чаті.</p>
+    {% endfor %}
+  </div>
+
+  <form method="post" action="{% url 'send_chat_message' chat.id %}" class="chat-form">
+    {% csrf_token %}
+    <textarea name="body" rows="3" placeholder="Ваше повідомлення..." required></textarea>
+    <button type="submit" class="btn-submit">➤</button>
+  </form>
+
+  <a href="{% url 'chat_list' %}" class="btn-back">← Назад до чатів</a>
+</div>
+
+<script>
+  function toggleParticipants() {
+    const wrapper = document.getElementById("participants-wrapper");
+    wrapper.classList.toggle("show");
+  }
+</script>
+{% endblock %}

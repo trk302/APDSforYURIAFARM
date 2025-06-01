@@ -1,0 +1,158 @@
+/* tasks.css */
+.tasks-container {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  font-family: Arial, sans-serif;
+}
+
+.tasks-container h2 {
+  text-align: center;
+  font-size: 28px;
+  margin-bottom: 20px;
+  color: #222;
+}
+
+.tasks-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.create-btn {
+  background-color: #bdf0e3;
+  color: #000;
+  padding: 8px 16px;
+  border-radius: 12px;
+  text-decoration: none;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transition: background 0.3s ease;
+}
+
+.create-btn:hover {
+  background-color: #96e0d1;
+}
+
+.view-switch .switch-btn {
+  background-color: #bdf0e3;
+  color: #000;
+  padding: 6px 14px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  font-weight: bold;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transition: background 0.3s ease;
+  margin-left: 8px;
+}
+.view-switch .switch-btn.active,
+.view-switch .switch-btn:hover {
+  background-color: #96e0d1;
+}
+
+.task-list-tab {
+  display: none;
+}
+.task-list-tab.active {
+  display: block;
+}
+
+.task-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.task-item {
+  background: #f9fdfa;
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+  word-wrap: break-word;
+}
+
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 10px;
+}
+.task-header strong {
+  font-size: 18px;
+  color: #111;
+}
+.task-dates {
+  font-size: 14px;
+  color: #555;
+  white-space: nowrap;
+}
+
+.task-body p {
+  margin: 0 0 8px;
+  line-height: 1.4;
+}
+.task-body small {
+  color: #666;
+  display: block;
+}
+
+.task-actions {
+  margin-top: 12px;
+}
+
+.icon-btn {
+  background-color: #bdf0e3;
+  color: #000;
+  padding: 6px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  margin-right: 8px;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.25);
+  transition: background 0.3s ease;
+  display: inline-block;
+  text-align: center;
+  cursor: pointer;
+  border: none;
+  outline: none;
+  text-decoration: none;
+}
+
+.icon-btn:hover {
+  background-color: #96e0d1;
+}
+
+.icon-btn svg,
+.icon-btn img {
+  margin-right: 6px;
+}
+
+.no-tasks {
+  text-align: center;
+  color: #777;
+  padding: 40px 0;
+}
+
+#calendar-widget {
+  max-width: 900px;
+  margin: 20px auto;
+}
+
+.task-item-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.task-item-link:hover .task-item {
+  background-color: #eefefb;
+  cursor: pointer;
+}
+
+
